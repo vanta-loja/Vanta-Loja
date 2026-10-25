@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VANTA. | Catálogo de Sneakers</title>
+<style>
+:root{--bg:#f6f5f1;--ink:#171717;--muted:#747474;--line:#e2e0da;--acid:#d7ff35;--blue:#008cff}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Arial,Helvetica,sans-serif}
+.top{background:#171717;color:#fff;text-align:center;padding:8px 12px;font-size:10px;letter-spacing:1.4px}
+header{padding:18px 5%;display:flex;align-items:center;justify-content:space-between;background:var(--bg);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+.logo{font-size:28px;font-weight:900;letter-spacing:-2px}.logo span{color:#999}
+button,input,select,textarea{font:inherit}.order-open{background:transparent;border:1px solid #222;padding:12px 14px;font-weight:800;font-size:12px;cursor:pointer}
+.hero{margin:20px 5%;background:#171717;color:#fff;padding:36px 6%;min-height:220px;position:relative;overflow:hidden}
+.eyebrow{font-size:10px;letter-spacing:3px;color:#bbb;text-transform:uppercase}
+.hero h1{font-size:clamp(34px,8vw,58px);line-height:.92;letter-spacing:-2px;margin:18px 0 14px;max-width:560px}
+.hero h1 span{color:var(--acid)}.hero p{font-size:12px;line-height:1.6;color:#ccc;max-width:360px}
+.wrap{padding:10px 5% 110px}.title-row{display:flex;align-items:end;justify-content:space-between;gap:12px;margin:12px 0 16px}
+h2{font-size:24px;margin:0 0 5px;letter-spacing:-.6px}.muted{color:var(--muted);font-size:12px}
+.filters{display:flex;gap:9px;margin-bottom:18px}.filters input,.filters select{width:100%;min-width:0;padding:12px;border:1px solid var(--line);background:#fff;border-radius:0}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.card{background:#fff;border:1px solid var(--line);min-width:0}.shoe{height:145px;background:#ecebe6;display:flex;align-items:center;justify-content:center;font-size:64px}
+.cardbody{padding:14px}.brand{font-size:11px;color:#777;letter-spacing:1px}.name{font-size:16px;font-weight:800;line-height:1.25;margin:8px 0}.price-label{font-size:11px;color:#888}.price{font-size:22px;font-weight:900;margin:10px 0 14px}
+.sizes{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-bottom:14px}.size{border:1px solid #ddd;background:#f7f6f2;padding:9px 0;color:var(--blue);font-size:13px;cursor:pointer}.size.active{background:#171717;color:#fff;border-color:#171717}
+.qtyrow{display:flex;align-items:center;gap:8px;font-size:12px;margin-bottom:14px}.qtyrow input{width:66px;padding:9px;border:1px solid #ddd}.add{width:100%;border:0;background:#171717;color:#fff;padding:14px 8px;font-size:12px;font-weight:800;cursor:pointer}
+.empty{padding:28px;text-align:center;color:#777;grid-column:1/-1}
+.float{position:fixed;bottom:14px;right:14px;z-index:6;background:var(--acid);color:#008cff;border:0;padding:17px 20px;font-weight:900;box-shadow:0 4px 20px #0002;cursor:pointer}
+.modal{display:none;position:fixed;inset:0;background:#0009;z-index:10;padding:14px;align-items:flex-end;justify-content:center}.modal.show{display:flex}.panel{background:#fff;width:100%;max-width:560px;max-height:90vh;overflow:auto;padding:20px}.panelhead{display:flex;justify-content:space-between;align-items:center}.close{border:0;background:#eee;padding:8px 12px}.cartline{border-bottom:1px solid #eee;padding:12px 0;font-size:13px}.cartline strong{display:block;margin-bottom:5px}.cartline button{border:1px solid #ddd;background:#fff;padding:5px 9px;margin-right:5px}.field{display:block;width:100%;padding:12px;border:1px solid #ddd;margin:9px 0}.total{font-size:22px;font-weight:900;padding:14px 0}.send{width:100%;padding:16px;border:0;background:#171717;color:#fff;font-weight:900;cursor:pointer}.hint{font-size:11px;color:#777;line-height:1.5}
+@media(min-width:720px){.grid{grid-template-columns:repeat(4,minmax(0,1fr))}.shoe{height:175px}.hero{padding:48px 7%;min-height:280px}.cardbody{padding:16px}}
+</style>
+</head>
+<body>
+<div class="top">CATÁLOGO VANTA · PEDIDOS DIRETO PELO WHATSAPP</div>
+<header><div class="logo">VANTA<span>.</span></div><button class="order-open" onclick="openCart()">MEU PEDIDO (<span id="count">0</span>)</button></header>
+<section class="hero"><div class="eyebrow">Sneakers & streetwear</div><h1>SEU ESTILO.<br><span>SEU PRÓXIMO PAR.</span></h1><p>Escolha seu modelo, selecione a numeração e monte seu pedido. A confirmação de disponibilidade é feita diretamente pelo WhatsApp.</p></section>
+<main class="wrap">
+<div class="title-row"><div><h2>Escolha seus pares.</h2><div class="muted">Selecione o tamanho e adicione ao pedido.</div></div></div>
+<div class="filters"><input id="search" placeholder="Buscar modelo ou marca..." oninput="render()"><select id="mode" onchange="render()"><option value="retail">Preço de varejo</option><option value="wholesale">Preço de atacado</option></select></div>
+<div class="grid" id="catalog"></div>
+</main>
+<button class="float" onclick="openCart()">ENVIAR PEDIDO · <span id="floatCount">0</span></button>
+<div class="modal" id="modal" onclick="if(event.target===this)closeCart()"><div class="panel">
+<div class="panelhead"><h2>Seu pedido</h2><button class="close" onclick="closeCart()">Fechar ✕</button></div>
+<div id="cartLines"></div><div class="total" id="total">Total: R$ 0,00</div>
+<input class="field" id="customer" placeholder="Seu nome (obrigatório)">
+<input class="field" id="city" placeholder="Cidade / bairro (opcional)">
+<textarea class="field" id="notes" rows="3" placeholder="Observações (opcional)"></textarea>
+<p class="hint">O pedido será enviado para confirmação no WhatsApp. A disponibilidade e o frete serão confirmados no atendimento.</p>
+<button class="send" onclick="sendOrder()">CONTINUAR PELO WHATSAPP</button>
+</div></div>
+<script>
+const WHATSAPP_NUMBER = "5531983477141";
+const products = [
+{id:1,name:"Dunk Branco Crepe",brand:"Nike",cost:95,sizes:["34","35","36","37","38","39","40","41","42","43"]},
+{id:2,name:"Air Force Branco",brand:"Nike",cost:95,sizes:["34","35","36","37","38","39","40","41","42","43"]},
+{id:3,name:"Dunk Panda",brand:"Nike",cost:95,sizes:["34","35","36","37","38","39","40","41","42","43"]},
+{id:4,name:"Jordan Travis Bege Branco",brand:"Nike",cost:95,sizes:["38","39","40","41","42","43"]},
+{id:5,name:"Nike Zoom X Branco",brand:"Nike",cost:110,sizes:["34","35","36","37","38","39","40","41","42","43"]},
+{id:6,name:"TN Azul Branco",brand:"Nike",cost:220,sizes:["38","39","40","41","42","43"]},
+{id:7,name:"Vomero Lilás Importado",brand:"Nike",cost:295,sizes:["34","35","36","37","38","39","40"]},
+{id:8,name:"New Balance 9060 Taupe",brand:"New Balance",cost:195,sizes:["34","35","36","37","38","39","40","41","42","43"]},
+{id:9,name:"New Balance 530 Branco Cinza",brand:"New Balance",cost:190,sizes:["34","35","36","37","38","39","40","41","42","43"]},
+{id:10,name:"New Balance 1000 Marfim Preto",brand:"New Balance",cost:160,sizes:["34","35","36","37","38","39","40","41","42","43"]},
+{id:11,name:"Forum Cinza Níquel",brand:"Adidas",cost:100,sizes:["34","35","36","37","38","39","40","41","42","43"]},
+{id:12,name:"Adi 2000 Branco",brand:"Adidas",cost:120,sizes:["34","35","36","37","38","39","40","41","42","43"]},
+{id:13,name:"Adizero Branco Preto",brand:"Adidas",cost:230,sizes:["34","35","36","37","38","39","40","41","42","43"]},
+{id:14,name:"Samba Tradicional",brand:"Adidas",cost:90,sizes:["34","35","36","37","38","39","40","41","42","43"]},
+{id:15,name:"Vans VR3 Rato",brand:"Vans",cost:95,sizes:["34","35","36","37","38","39","40","41","42","43"]},
+{id:16,name:"On Meia Off",brand:"On",cost:120,sizes:["34","35","36","37","38","39","40","41","42","43"]},
+{id:17,name:"Mizuno Prophecy 15 Preto",brand:"Mizuno",cost:260,sizes:["38","39","40","41","42","43"]},
+{id:18,name:"Asics Cinza",brand:"Asics",cost:110,sizes:["38","39","40","41","42","43"]},
+{id:19,name:"Alo Off White",brand:"Alo",cost:115,sizes:["34","35","36","37","38","39","40","41","42","43"]},
+{id:20,name:"Gucci Web Preto",brand:"Gucci",cost:140,sizes:["38","39","40","41","42","43"]}
+];
+const selected={}, cart={};
+const money=n=>Number(n).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+function price(p){return Math.round(p.cost*(document.getElementById("mode").value==="wholesale"?1.4:1.6)*100)/100}
+function render(){let q=document.getElementById("search").value.toLowerCase().trim();let items=products.filter(p=>(p.name+" "+p.brand).toLowerCase().includes(q));document.getElementById("catalog").innerHTML=items.map(p=>`<article class="card"><div class="shoe" aria-label="Ilustração de tênis">👟</div><div class="cardbody"><div class="brand">${p.brand}</div><div class="name">${p.name}</div><div class="price-label">Preço de ${document.getElementById("mode").value==="wholesale"?"atacado":"varejo"}</div><div class="price">${money(price(p))}</div><div class="sizes">${p.sizes.map(s=>`<button class="size ${selected[p.id]===s?"active":""}" onclick="pick(${p.id},'${s}')">${s}</button>`).join("")}</div><div class="qtyrow">Quantidade <input id="qty-${p.id}" type="number" min="1" max="99" value="1"></div><button class="add" onclick="add(${p.id})">ADICIONAR AO PEDIDO +</button></div></article>`).join("")||'<div class="empty">Nenhum modelo encontrado.</div>'}
+function pick(id,s){selected[id]=s;render()}
+function add(id){if(!selected[id]){alert("Selecione uma numeração antes de adicionar.");return}let qty=Math.max(1,Math.min(99,parseInt(document.getElementById("qty-"+id).value||"1",10)));let key=id+"-"+selected[id];if(!cart[key])cart[key]={id,size:selected[id],qty:0};cart[key].qty+=qty;updateCount();alert("Adicionado ao pedido!")}
+function updateCount(){let n=Object.values(cart).reduce((a,x)=>a+x.qty,0);document.getElementById("count").textContent=n;document.getElementById("floatCount").textContent=n}
+function openCart(){drawCart();document.getElementById("modal").classList.add("show")}
+function closeCart(){document.getElementById("modal").classList.remove("show")}
+function drawCart(){let entries=Object.entries(cart);document.getElementById("cartLines").innerHTML=entries.length?entries.map(([k,x])=>{let p=products.find(p=>p.id===x.id);return `<div class="cartline"><strong>${p.name} · ${p.brand}</strong>Numeração ${x.size} · ${money(price(p))} cada<br>Quantidade: ${x.qty}<p><button onclick="change('${k}',-1)">−</button><button onclick="change('${k}',1)">+</button><button onclick="removeItem('${k}')">Remover</button></p></div>`}).join(""):'<p>Seu pedido está vazio. Escolha um modelo e adicione ao pedido.</p>';let total=entries.reduce((sum,[,x])=>sum+price(products.find(p=>p.id===x.id))*x.qty,0);document.getElementById("total").textContent="Total: "+money(total)}
+function change(k,d){cart[k].qty+=d;if(cart[k].qty<=0)delete cart[k];updateCount();drawCart()}
+function removeItem(k){delete cart[k];updateCount();drawCart()}
+function sendOrder(){let entries=Object.entries(cart);if(!entries.length){alert("Adicione pelo menos um par ao pedido.");return}let name=document.getElementById("customer").value.trim();if(!name){alert("Informe seu nome para continuar.");document.getElementById("customer").focus();return}if(!/^\d{10,15}$/.test(WHATSAPP_NUMBER)){alert("O número do WhatsApp precisa estar no formato internacional, somente números.");return}let wholesale=document.getElementById("mode").value==="wholesale";let total=0;let lines=entries.map(([,x])=>{let p=products.find(p=>p.id===x.id);let unit=price(p);total+=unit*x.qty;return `• ${p.name} (${p.brand}) — tam. ${x.size} — qtd. ${x.qty} — ${money(unit)} cada`});let msg=`Olá! Quero fazer um pedido na VANTA.%0A%0ACliente: ${encodeURIComponent(name)}%0AModalidade: ${encodeURIComponent(wholesale?"Atacado":"Varejo")}%0A%0A${encodeURIComponent(lines.join("\n"))}%0A%0ATotal estimado: ${encodeURIComponent(money(total))}%0A Cidade/bairro: ${encodeURIComponent(document.getElementById("city").value.trim()||"Não informado")}%0A Observações: ${encodeURIComponent(document.getElementById("notes").value.trim()||"Nenhuma")}`;let url="https://wa.me/"+WHATSAPP_NUMBER+"?text="+msg;window.location.assign(url)}
+render();updateCount();
+</script>
+</body>
+</html>
