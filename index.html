@@ -74,7 +74,7 @@ function sendOrder(){
   let entries=Object.entries(cart);if(!entries.length){alert("Adicione pelo menos um produto ao pedido.");return}
   let name=document.getElementById("customer").value.trim();if(!name){alert("Informe seu nome.");return}
   let total=entries.reduce((s,[k,q])=>{let p=products.find(p=>p.id===Number(k.split("-")[0]));return s+price(p)*q},0);
-  let message=`Olá! Quero fazer um pedido VANTA (VAREJO):\n\n`+entries.map(([k,q])=>{let [id,size]=k.split("-"),p=products.find(p=>p.id===Number(id));return `• ${p.name} — ${p.brand} — tam. ${size} — ${q} par(es) × ${money(price(p))} = ${money(price(p)*q)}`}).join("\n")+`\n\nTotal estimado: ${money(total)}\nNome: ${name}\nCidade/bairro: ${document.getElementById("place").value||"A combinar"}\nObservações: ${document.getElementById("notes").value||"Nenhuma"}\n\nPode confirmar estoque, prazo, entrega e pagamento?`;
+  let message=`Olá! Quero fazer meu pedido na VANTA:\n\n`+entries.map(([k,q])=>{let [id,size]=k.split("-"),p=products.find(p=>p.id===Number(id));return `• ${p.name} — ${p.brand} — tam. ${size} — ${q} par(es) × ${money(price(p))} = ${money(price(p)*q)}`}).join("\n")+`\n\nTotal estimado: ${money(total)}\nNome: ${name}\nCidade/bairro: ${document.getElementById("place").value||"A combinar"}\nObservações: ${document.getElementById("notes").value||"Nenhuma"}\n\nPode confirmar estoque, prazo, entrega e pagamento?`;
   window.location.href="https://wa.me/"+WHATSAPP_NUMBER+"?text="+encodeURIComponent(message);
 }
 render();
